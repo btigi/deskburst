@@ -1,0 +1,15 @@
+<Window x:Class="DeskBurst.FireworksWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Fireworks" 
+        WindowStyle="None" 
+        AllowsTransparency="True"
+        Background="Transparent"
+        Topmost="True"
+        ShowInTaskbar="False"
+        ResizeMode="NoResize"
+        IsHitTestVisible="False">
+    <Grid>
+        <Canvas x:Name="FireworksCanvas" Background="#33000000"/>
+    </Grid>
+</Window> 
