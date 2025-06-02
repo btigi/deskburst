@@ -1,18 +1,38 @@
-name: Test Release
+name: Create Release
 
 on:
-  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
 
 jobs:
-  test-release:
+  build-and-release:
     runs-on: windows-latest
+
+    defaults:
+      run:
+        working-directory: ./src
+
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Check gh version
-        shell: pwsh
-        run: gh --version
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Publish
+        run: dotnet publish DeskBurst/DeskBurst.csproj -c Release --property:PublishDir=../../publish
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
