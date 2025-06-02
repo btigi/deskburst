@@ -35,11 +35,16 @@ jobs:
         run: dotnet publish DeskBurst/DeskBurst.csproj -c Release --property:PublishDir=../../publish
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ github.ref_name }}
-          name: ${{ github.ref_name }}
-          generate_release_notes: true
-          files: ../publish/*
+        run: |
+          $tag = "${{ github.ref_name }}"
+          $files = Get-ChildItem -Path "../publish/*" -File | ForEach-Object { $_.FullName }
+          $fileArgs = $files | ForEach-Object { "--attach=`"$_`"" }
+          gh release create $tag `
+            --repo="$env:GITHUB_REPOSITORY" `
+            --title="$($tag -replace '^v', '')" `
+            --generate-notes `
+            --latest `
+            $fileArgs
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
