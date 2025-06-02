@@ -32,23 +32,24 @@ jobs:
         run: dotnet build --configuration Release --no-restore
 
       - name: Publish
-        run: dotnet publish -c Release --property:PublishDir=../../publish
+        run: dotnet publish DeskBurst/DeskBurst.csproj -c Release --property:PublishDir=../../publish
 
       - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.ref_name }}
-        shell: bash
+        shell: pwsh
         run: |
-          gh release create "$tag" \
-            --repo="$GITHUB_REPOSITORY" \
-            --title="${tag#v}" \
+          gh release create "$env:tag" `
+            --repo "$env:GITHUB_REPOSITORY" `
+            --title "$($env:tag -replace '^v','')" `
             --generate-notes
 
       - name: Upload release asset
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        shell: bash
+          tag: ${{ github.ref_name }}
+        shell: pwsh
         run: |
-          gh release upload "$tag" ./publish/* --repo="$GITHUB_REPOSITORY"
+          gh release upload "$env:tag" ../publish/* --repo "$env:GITHUB_REPOSITORY"
         working-directory: ${{ github.workspace }}
