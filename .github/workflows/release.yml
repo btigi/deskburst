@@ -14,10 +14,12 @@ jobs:
         shell: pwsh
         run: gh --version
 
-      - name: Create release
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          generate_release_notes: true
+          files: ../publish/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          tag: "v1.2.3"
-        shell: pwsh
-        run: |
-          gh release create "$env:tag" --repo "$env:GITHUB_REPOSITORY" --title "$($env:tag -replace '^v','')" --generate-notes
