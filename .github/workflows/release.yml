@@ -38,6 +38,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.ref_name }}
+        shell: bash
         run: |
           gh release create "$tag" \
             --repo="$GITHUB_REPOSITORY" \
@@ -47,6 +48,7 @@ jobs:
       - name: Upload release asset
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
         run: |
           gh release upload "$tag" ./publish/* --repo="$GITHUB_REPOSITORY"
         working-directory: ${{ github.workspace }}
