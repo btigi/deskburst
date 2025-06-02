@@ -34,16 +34,21 @@ jobs:
       - name: Publish
         run: dotnet publish DeskBurst.csproj -c Release --property:PublishDir=../publish
 
+      - name: Create Release Zip
+        run: |
+          $version = "${{ github.ref_name }}" -replace '^v', ''
+          Compress-Archive -Path "../publish/*" -DestinationPath "../DeskBurst-$version.zip" -Force
+
       - name: Create GitHub Release
         run: |
           $tag = "${{ github.ref_name }}"
-          $files = Get-ChildItem -Path "../publish/*" -File | ForEach-Object { $_.FullName }
+          $version = $tag -replace '^v', ''
           gh release create $tag `
             --repo="$env:GITHUB_REPOSITORY" `
-            --title="$($tag -replace '^v', '')" `
+            --title="$version" `
             --generate-notes `
             --latest `
-            $files
+            "../DeskBurst-$version.zip"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
