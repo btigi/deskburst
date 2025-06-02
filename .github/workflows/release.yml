@@ -40,10 +40,7 @@ jobs:
           tag: ${{ github.ref_name }}
         shell: pwsh
         run: |
-          gh release create "$env:tag" `
-            --repo "$env:GITHUB_REPOSITORY" `
-            --title "$($env:tag -replace '^v','')" `
-            --generate-notes
+          gh release create "$env:tag" --repo "$env:GITHUB_REPOSITORY" --title "$($env:tag -replace '^v','')" --generate-notes
 
       - name: Upload release asset
         env:
