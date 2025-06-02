@@ -38,7 +38,7 @@ jobs:
         run: |
           $tag = "${{ github.ref_name }}"
           $files = Get-ChildItem -Path "../publish/*" -File | ForEach-Object { $_.FullName }
-          $fileArgs = $files | ForEach-Object { "--attach=`"$_`"" }
+          $fileArgs = $files | ForEach-Object { "--asset=`"$_`"" }
           gh release create $tag `
             --repo="$env:GITHUB_REPOSITORY" `
             --title="$($tag -replace '^v', '')" `
