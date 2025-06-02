@@ -1,52 +1,23 @@
-name: Create Release
+name: Test Release
 
 on:
-  push:
-    tags:
-      - "v*"
-
-permissions:
-  contents: write
+  workflow_dispatch:
 
 jobs:
-  build-and-release:
+  test-release:
     runs-on: windows-latest
-
-    defaults:
-      run:
-        working-directory: ./src
-
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.0.x'
-
-      - name: Restore dependencies
-        run: dotnet restore
-
-      - name: Build
-        run: dotnet build --configuration Release --no-restore
-
-      - name: Publish
-        run: dotnet publish DeskBurst/DeskBurst.csproj -c Release --property:PublishDir=../../publish
+      - name: Check gh version
+        shell: pwsh
+        run: gh --version
 
       - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ github.ref_name }}
+          tag: "v1.2.3"
         shell: pwsh
         run: |
           gh release create "$env:tag" --repo "$env:GITHUB_REPOSITORY" --title "$($env:tag -replace '^v','')" --generate-notes
-
-      - name: Upload release asset
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ github.ref_name }}
-        shell: pwsh
-        run: |
-          gh release upload "$env:tag" ../publish/* --repo "$env:GITHUB_REPOSITORY"
-        working-directory: ${{ github.workspace }}
